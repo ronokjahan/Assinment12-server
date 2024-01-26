@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors')
 const port = 3000
 
@@ -22,36 +22,49 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    const database = client.db("bistroDb").collection("menu");
-    const databases=client.db("bistroDb").collection("revews")
-    const cartdata=client.db("bistroDb").collection("carts")
+    const database = client.db("Chamer").collection("children");
+    const enroll = client.db("Enroll").collection("data");
+   
     
-    app.get('/menu',async(req ,res)=>{
+    app.get('/children',async(req ,res)=>{
         const result=await database.find().toArray()
         res.send(result)
     })
-    app.get('/revews',async(req ,res)=>{
-        const result=await databases.find().toArray()
-        res.send(result)
+    app.get('/children/:_id',async(req ,res)=>{
+      const id=req.params._id
+      
+      const query={_id:new ObjectId(id)}
+      const result=await database.findOne(query)
+      res.send(result)
+    
+      
     })
-
-    app.get('/carts',async(req,res)=>{
-      const email=req.query.email
-      if(!email){
-        res.send([])
-
-      }
-      const query = { email: email };
-      const result=await cartdata.find(query).toArray()
+    app.post("/enroll",async(req,res)=>{
+      const query=req.body
+      console.log(query);
+      const result=await enroll.insertOne(query)
       res.send(result)
 
     })
-    app.post('/carts',async(req,res)=>{
-      const item=req.body
-      console.log(item);
-      const result=await cartdata.insertOne(item)
+    app.get('/enroll',async(req,res)=>{
+      const id=enroll.find()
+      // let query={}
+      // if(req.query?.email){
+      //   query={email:req.query.email}
+      // }
+      const queryss=enroll.find()
+      const result=await id.toArray(queryss)
       res.send(result)
     })
+    app.get('/enroll/:_id',async(req,res)=>{
+      const id=req.params._id
+      const query={_id:new ObjectId(id)}
+      const result=await  enroll.findOne(query)
+      res.send(result)
+    })
+  
+
+    
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
