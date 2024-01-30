@@ -13,7 +13,10 @@
        "methods":["GET","POST"]
      },
      {"rewrites": [
-      {"source": "/(.*)", "destination": "/"}
+      {"source": "/(.*)", "destination": "/"},
+      {
+         "buildCommand": "next build"
+       }
    ]
    }
     ]
